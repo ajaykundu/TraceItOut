@@ -35,7 +35,7 @@ firstFrame = None
 
 # Define the codec and create VideoWriter object
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('D:\projectS\output.avi',fourcc, 20.0, (640,480))
+out = cv2.VideoWriter('C:\Users\Dell\Documents\GitHub\capstoneproject\output.avi',fourcc, 20.0, (640,480))
 
 # loop over the frames of the video
 while True:
