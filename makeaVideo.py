@@ -8,7 +8,7 @@ Created on Thu Mar 22 18:20:12 2018
 import numpy as np
 import cv2
 
-cap = cv2.VideoCapture('D:\projectS\basic-motion-detection\videos\example_01.mp4')
+cap = cv2.VideoCapture(0)
 
 # Define the codec and create VideoWriter object
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
