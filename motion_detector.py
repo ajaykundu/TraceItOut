@@ -9,6 +9,8 @@ import datetime
 import imutils
 import time
 import cv2
+import os
+
 
 start_time = time.time()
 start_time 
@@ -35,8 +37,15 @@ firstFrame = None
 
 # Define the codec and create VideoWriter object
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('Users\Dell\Documents\GitHub\capstoneproject\output.avi',fourcc, 20.0, (640,480))
+location = os.getcwd()
+directory = 'video'
+if not os.path.exists(directory):
+	os.makedirs(directory)
 
+location = location + '/video\output.avi'
+print(location)
+out = cv2.VideoWriter(location,fourcc, 20.0, (640,480))
+print(out)
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
