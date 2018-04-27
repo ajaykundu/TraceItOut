@@ -36,15 +36,23 @@ else:
 firstFrame = None
 
 # Define the codec and create VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
+fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 location = os.getcwd()
 directory = 'video'
 if not os.path.exists(directory):
 	os.makedirs(directory)
 
-location = location + '/video\output.avi'
+
+# for setting of every video.
+width = camera.get(3)  # float
+height = camera.get(4)
+width = round(width)
+height = round(height)
+print(width)
+
+location = location + '/video\output.mp4'
 print(location)
-out = cv2.VideoWriter(location,fourcc, 20.0, (640,480))
+out = cv2.VideoWriter(location,fourcc, 20.0, (width,height))
 print(out)
 # loop over the frames of the video
 while True:
@@ -110,9 +118,9 @@ while True:
     cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),(10,frame.shape[0] - 10),cv2.FONT_HERSHEY_SIMPLEX,0.35,(0,0, 255),1)
     
     # show the frame and record if the user presses a key
-    cv2.imshow("Security Feed",frame)
     cv2.imshow("Thresh", thresh)
     cv2.imshow("Frame Delta", frameDelta)
+    cv2.imshow("Security Feed",frame)
     key = cv2.waitKey(1) & 0xFF
     
     # if the `q` key is pressed, break from the lop
