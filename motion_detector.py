@@ -21,7 +21,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the video file")
 ap.add_argument("-a", "--min-area", type=int, default=500, help="minimum area size")
 args = vars(ap.parse_args())
- 
+
+print(args["video"])
 # if the video argument is None, then we are reading from webcam
 if args.get("video",None) is None:
     camera = cv2.VideoCapture(0)
@@ -35,25 +36,27 @@ else:
 # initialize the first frame in the video stream
 firstFrame = None
 
-# Define the codec and create VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+# get the loaction and create video folder if not created.
 location = os.getcwd()
 directory = 'video'
 if not os.path.exists(directory):
 	os.makedirs(directory)
-
+location = location + '/video\output.avi'
+print(location)
 
 # for setting of every video.
 width = camera.get(3)  # float
 height = camera.get(4)
 width = round(width)
 height = round(height)
-print(width)
+print("wirth of frame : "+str(width))
+print("height of frame : "+str(height))
 
-location = location + '/video\output.mp4'
-print(location)
-out = cv2.VideoWriter(location,fourcc, 20.0, (width,height))
-print(out)
+# Define the codec and create VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'MPEG')
+out = cv2.VideoWriter(location,fourcc, 100.0, (width,height))
+
+
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
