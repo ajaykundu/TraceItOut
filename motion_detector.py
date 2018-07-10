@@ -1,9 +1,4 @@
-# USAGE
-# python motion_detector.py
-# python motion_detector.py --video videos/example_01.mp4
 
-# import the necessary packages
-# import the necessary packages
 import argparse
 import datetime
 import imutils
@@ -16,18 +11,20 @@ start_time = time.time()
 start_time 
 elapsed_time = time.time() - start_time
 elapsed_time
-# construct the argument parser and parse the arguments
+
 ap = argparse.ArgumentParser()
+print(ap)
 ap.add_argument("-v", "--video", help="path to the video file")
 ap.add_argument("-a", "--min-area", type=int, default=500, help="minimum area size")
 args = vars(ap.parse_args())
+
 
 print(args["video"])
 # if the video argument is None, then we are reading from webcam
 if args.get("video",None) is None:
     camera = cv2.VideoCapture(0)
     print('hello')
-    time.sleep(0.25)
+    
 
 # otherwise, we are reading from a video file
 else:
@@ -35,13 +32,26 @@ else:
          
 # initialize the first frame in the video stream
 firstFrame = None
-
 # get the loaction and create video folder if not created.
+
+
+hell=[]
+print(hell)
+if args["video"]:
+    hell = args["video"].split("/")
+else:
+    hell.append('hello')
+    hell.append('output.avi')
+
+
 location = os.getcwd()
 directory = 'video'
-if not os.path.exists(directory):
+if not os.path.exists(directory):   
 	os.makedirs(directory)
-location = location + '/video\output.avi'
+
+directory = "/" + directory + "/" + hell[1]
+print(directory)
+location = location + directory
 print(location)
 
 # for setting of every video.
@@ -52,22 +62,34 @@ height = round(height)
 print("wirth of frame : "+str(width))
 print("height of frame : "+str(height))
 
-# Define the codec and create VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*'MPEG')
-out = cv2.VideoWriter(location,fourcc, 100.0, (width,height))
 
+# count frames
+length = int(camera.get(cv2.CAP_PROP_FRAME_COUNT))
+print("length of video : " +str(length) )
+
+fps    = camera.get(cv2.CAP_PROP_FPS)
+print("length of video : "+ str(fps))
+
+
+if fps==0:
+    fps = 30
+
+# Define the codec and create VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter(location,fourcc, fps , (width,height))
+
+numframe = 0
 
 # loop over the frames of the video
 while True:
-    # grab the current frame and initialize the occupied/unoccupied
-    # text
+  
     (grabbed, frame) = camera.read()
+    numframe = numframe + 1
     thisFrame = frame
     #out.write(thisFrame)
     text = "Unoccupied"
     
-    # if the frame could not be grabbed, then we have reached the end
-    # of the video
+    
     if not grabbed:
         break
     
@@ -85,38 +107,38 @@ while True:
     
     elapsed_time = time.time() - start_time
     print(elapsed_time)
-    if elapsed_time > 4:
+    if elapsed_time > 2:
         start_time = time.time()
         firstFrame = gray
     
     
-    # compute the absolute difference between the current frame and
-	# first frame
     frameDelta = cv2.absdiff(firstFrame,gray)
     thresh = cv2.threshold(frameDelta, 25, 255,cv2.THRESH_BINARY)[1]
     
-    # dilate the thresholded image to fill in holes, then find contours
-	# on thresholded image
+    
     thresh = cv2.dilate(thresh,None,iterations = 2)
     _ , cnts, _ = cv2.findContours(thresh.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     
-    # loop over the contours
+    #just write the frame one time.
+    fwr = 1
+    
     for c in cnts:
         #  if the contour is too small, ignore it
         if cv2.contourArea(c) < args["min_area"]:
             continue
         
-        # compute the bounding box for the contour, draw it on the frame,
-        # and update the text
+        
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame,(x,y),(x + w,y + h), (0, 255, 0),2)
         text = "Occupied"
-        print("hello")
-        out.write(thisFrame)
+        #print("hello")
+        if fwr==1:
+            out.write(thisFrame)
+            fwr=0
+        
+        
     
-    # writing on frame
     
-    # draw the text and timestamp on the frame
     cv2.putText(frame, "Room Statis: {}".format(text), (10,20),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),(10,frame.shape[0] - 10),cv2.FONT_HERSHEY_SIMPLEX,0.35,(0,0, 255),1)
     
@@ -132,6 +154,7 @@ while True:
     
 
 # cleanup the camera and close any open windows
+print(numframe)
 camera.release()
 out.release()
 cv2.destroyAllWindows()
